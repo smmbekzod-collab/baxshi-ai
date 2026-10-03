@@ -1,0 +1,55 @@
+name: Test and build APKs
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install -r backend/requirements-dev.txt
+      - run: python -m pytest -q tests
+        working-directory: backend
+  android:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - flavor: user
+            target: lib/main.dart
+          - flavor: admin
+            target: lib/main_admin.dart
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+        working-directory: mobile
+      - run: flutter analyze
+        working-directory: mobile
+      - run: flutter test
+        working-directory: mobile
+      - name: Build installable test APK
+        working-directory: mobile
+        env:
+          API_URL: ${{ vars.API_BASE_URL || 'https://api.example.invalid' }}
+        run: flutter build apk --debug --flavor ${{ matrix.flavor }} --target ${{ matrix.target }} --dart-define=API_BASE_URL="$API_URL"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: baxshi-${{ matrix.flavor }}-debug
+          path: mobile/build/app/outputs/flutter-apk/*-debug.apk
+          if-no-files-found: error
