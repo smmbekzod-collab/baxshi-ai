@@ -1,0 +1,14 @@
+{
+  "app-admin-debug.apk": {
+    "sha256": "c9bf3878bb387b7eb97f5925d7e01d2263af4041b85d2ddcb48e2b4ea6a93cb5",
+    "size_bytes": 168627990,
+    "api_base_url": "https://api.example.invalid",
+    "type": "debug-build-verification"
+  },
+  "app-user-debug.apk": {
+    "sha256": "aef705f871aada270e0525546576763450581ca4d7bd65285911bd38a11b4800",
+    "size_bytes": 168627926,
+    "api_base_url": "https://api.example.invalid",
+    "type": "debug-build-verification"
+  }
+}

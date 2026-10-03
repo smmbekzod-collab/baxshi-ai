@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "demo-report",
+  "school": "xorazm",
+  "model_version": "fixture-only-no-model",
+  "reference_id": "synthetic-reference-not-a-master-recording",
+  "created_at": "2026-09-17T08:00:00Z",
+  "demo": true,
+  "audio_available": false,
+  "coach_text": "DEMO: Bu matn ekran imkoniyatlarini ko‘rsatish uchun yozilgan. Yozuvingiz tahlil qilinmagan. Haqiqiy tavsiyalar backend hisoblagan dalillar va ustoz tasdiqlagan mashqlar asosida beriladi.",
+  "metrics": [
+    {
+      "kind": "pitch",
+      "score": 78,
+      "confidence": 0.82,
+      "reason": "DEMO"
+    },
+    {
+      "kind": "rhythm",
+      "score": 84,
+      "confidence": 0.88,
+      "reason": "DEMO"
+    },
+    {
+      "kind": "breath",
+      "score": null,
+      "confidence": 0.2,
+      "reason": "Yozuvdan ishonchli baholash uchun dalil yetarli emas."
+    },
+    {
+      "kind": "resonance",
+      "score": null,
+      "confidence": 0.25,
+      "reason": "Yozuvdan ishonchli baholash uchun dalil yetarli emas."
+    },
+    {
+      "kind": "style",
+      "score": 72,
+      "confidence": 0.7,
+      "reason": "DEMO"
+    }
+  ],
+  "samples": [
+    {
+      "seconds": 0,
+      "user": 70,
+      "reference": 90
+    },
+    {
+      "seconds": 5,
+      "user": 74,
+      "reference": 90
+    },
+    {
+      "seconds": 10,
+      "user": 81,
+      "reference": 90
+    },
+    {
+      "seconds": 15,
+      "user": 77,
+      "reference": 90
+    },
+    {
+      "seconds": 20,
+      "user": 66,
+      "reference": 90
+    },
+    {
+      "seconds": 25,
+      "user": 84,
+      "reference": 90
+    },
+    {
+      "seconds": 30,
+      "user": 86,
+      "reference": 90
+    },
+    {
+      "seconds": 35,
+      "user": 79,
+      "reference": 90
+    },
+    {
+      "seconds": 40,
+      "user": 88,
+      "reference": 90
+    }
+  ],
+  "feedback": [
+    {
+      "start": 15,
+      "end": 20,
+      "message": "DEMO: Shu parchada etalon bilan ohang farqi bor deb tasavvur qilamiz.",
+      "exercise": "Parchani tinglang, qisqa jumlalarga bo‘lib, qulay ovoz balandligida takrorlang."
+    },
+    {
+      "start": 25,
+      "end": 30,
+      "message": "DEMO: Jumla ritmini alohida mashq qilish misoli.",
+      "exercise": "Avval matnni ritmik o‘qing, so‘ng kuy bilan birlashtiring."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+name: baxshi-ai
+x-backend: &backend
+  build: ./backend
+  environment: &environment
+    DATABASE_URL: postgresql+psycopg://baxshi:${DB_PASSWORD:?Run tool/setup_env.py}@db/baxshi
+    JWT_SECRET: ${JWT_SECRET:?Run tool/setup_env.py}
+    ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Run tool/setup_env.py}
+    MEDIA_ROOT: /data/media
+  volumes:
+    - media:/data/media
+  depends_on:
+    db:
+      condition: service_healthy
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: baxshi
+      POSTGRES_USER: baxshi
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run tool/setup_env.py}
+    volumes: [database:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U baxshi -d baxshi']
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+  api:
+    <<: *backend
+    ports: ['127.0.0.1:8000:8000']
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 30s
+      retries: 3
+  worker:
+    <<: *backend
+    command: [python, -m, app.worker]
+    cpus: 2
+    mem_limit: 1g
+volumes:
+  database:
+  media:

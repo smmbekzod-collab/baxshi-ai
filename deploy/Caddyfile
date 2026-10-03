@@ -1,0 +1,7 @@
+# Replace api.example.com with your domain; run Caddy on the Docker host.
+api.example.com {
+    request_body {
+        max_size 2MB
+    }
+    reverse_proxy 127.0.0.1:8000
+}
