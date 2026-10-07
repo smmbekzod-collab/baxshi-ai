@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../core/providers.dart';
 
 final dataProvider = FutureProvider.autoDispose.family<dynamic, String>((
@@ -12,7 +14,15 @@ final dataProvider = FutureProvider.autoDispose.family<dynamic, String>((
   return (await ref.watch(apiProvider).dio.get<dynamic>(path)).data;
 });
 String errorMessage(Object e) {
+  if (e is StateError) {
+    return e.message;
+  }
   if (e is DioException) {
+    final data = e.response?.data;
+    if (data is Map && data['detail'] is String) {
+      final label = analysisError(data['detail'] as String);
+      if (label != null) return label;
+    }
     return switch (e.response?.statusCode) {
       401 => 'Qayta kirish kerak.',
       403 => 'Bu amal uchun ruxsat yo‘q.',
@@ -202,3 +212,33 @@ Future<void> showData(BuildContext context, String title, dynamic data) =>
         ],
       ),
     );
+
+String? analysisError(String code) => const <String, String>{
+  'worker_unavailable':
+      'Tahlil worker’i ishlamayapti. Administrator serverni tekshirsin; yozuvingiz saqlangan.',
+  'decoder_unavailable':
+      'Serverda FFmpeg audio dekoderi yo‘q. Administrator Docker buildni tekshirsin.',
+  'audio_too_short': 'Yozuv juda qisqa. Kamida 5 soniya yozing.',
+  'audio_too_long': 'Yozuv 20 daqiqadan oshmasin.',
+  'audio_too_quiet':
+      'Ovoz juda past. Sokin joyda yaqinroq masofada qayta yozing.',
+  'audio_clipping':
+      'Ovoz buzilgan: mikrofon haddan tashqari kuchli signal olgan. Uzoqroq masofada qayta yozing.',
+  'invalid_audio': 'Audio fayl ochilmadi. Yangi yozuv tayyorlang.',
+  'unsupported_container': 'WAV yoki M4A formatdagi audio kerak.',
+  'reference_unavailable':
+      'Etalon o‘chirilgan yoki litsenziyasi tugagan. Boshqa etalon tanlang.',
+  'invalid_reference': 'Etalon tanlangan maktabga mos emas yoki faol emas.',
+  'media_expired':
+      'Serverdagi audio saqlash muddati tugagan. Mahalliy yozuvni qayta yuboring.',
+  'processing_failed':
+      'Server tahlilni yakunlay olmadi. Qayta urining yoki administratorga yozing.',
+  'attempt_limit': 'Qayta urinish chegarasiga yetildi. Administratorga yozing.',
+  'no_report': 'Hali hisobot yo‘q. Avval ovoz yozib tahlilga yuboring.',
+  'avatar_too_large': 'Rasm 3 MB dan kichik bo‘lsin.',
+  'invalid_avatar': 'JPG, PNG yoki WEBP rasm tanlang.',
+  'daily_quota': 'Bugungi tahlil limiti tugadi. Keyinroq urinib ko‘ring.',
+  'contact_unavailable':
+      'Bu kontaktga yozish ruxsati yo‘q. Administrator biriktirishni tekshirsin.',
+  'upgrade_required': 'Ilovani yangi versiyaga yangilang.',
+}[code];

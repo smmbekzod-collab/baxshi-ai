@@ -9,10 +9,18 @@ from .security import config, ph
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["init-db", "create-admin"])
+    parser.add_argument("command", choices=["init-db", "create-admin", "seed-demo"])
     args = parser.parse_args()
     settings = config()
     engine = connect(os.environ["DATABASE_URL"])
+    if args.command == "seed-demo":
+        from pathlib import Path
+        from .seed import seed_demo
+
+        print(
+            "Seeded:", seed_demo(engine, Path(os.environ.get("MEDIA_ROOT", "./media")))
+        )
+        return
     if args.command == "init-db":
         initialize(engine)
         print("Database initialized. Back up before future schema upgrades.")

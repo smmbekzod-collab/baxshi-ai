@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -63,7 +64,7 @@ class ApiClient {
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 45),
       sendTimeout: const Duration(seconds: 45),
-      headers: {'X-App-Version': '0.2.0'},
+      headers: {'X-App-Version': '0.3.1'},
       followRedirects: false, // Do not forward bearer tokens via redirects.
     );
     dio = Dio(options);

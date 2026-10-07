@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import '../features/analysis/domain/report.dart';
 import '../features/analysis/data/report_repository.dart';
 import '../features/recording/domain/recorder.dart';
@@ -20,7 +22,7 @@ final tokensProvider = Provider<TokenStore>(
 final apiProvider = Provider<ApiClient>((ref) {
   const url = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.example.invalid',
+    defaultValue: 'https://baxshi-ai-production.up.railway.app',
   );
   final client = ApiClient(url, ref.watch(tokensProvider));
   ref.onDispose(client.close);

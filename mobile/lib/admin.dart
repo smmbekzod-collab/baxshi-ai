@@ -3,8 +3,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+
 import 'core/providers.dart';
 import 'shared/api_ui.dart';
+import 'features/community/community.dart';
+import 'features/ai_provider_screen.dart';
 
 const schools = ['xorazm', 'qashqadaryo', 'surxondaryo', 'qoraqalpogiston'];
 
@@ -29,6 +32,8 @@ class _Admin extends ConsumerState<AdminHome> {
     'groups',
     'audit',
     'policy',
+    'lessons',
+    'ai-provider',
   ];
   static const labels = [
     'Umumiy holat',
@@ -40,6 +45,8 @@ class _Admin extends ConsumerState<AdminHome> {
     'Guruhlar',
     'Audit jurnali',
     'Server sozlamalari',
+    'O‘quv kurslari',
+    'AI provayderlari',
   ];
   String get section => sections[selected];
   String get path => section == 'policy' ? '/v1/config' : '/v1/admin/$section';
@@ -159,6 +166,15 @@ class _Admin extends ConsumerState<AdminHome> {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             SelectableText('ID: $id'),
+            if (section == 'lessons')
+              TextButton(
+                onPressed: () => write('/v1/admin/lessons/$id', 'PATCH', {
+                  'published': x['published'] != true,
+                }),
+                child: Text(
+                  x['published'] == true ? 'Yashirish' : 'Nashr qilish',
+                ),
+              ),
             if (section == 'users')
               Text(
                 '${x['username']} • ${x['role']} • ${x['active'] == true ? 'faol' : 'bloklangan'}',
@@ -320,6 +336,20 @@ class _Admin extends ConsumerState<AdminHome> {
       title: Text('Baxshi Admin • ${labels[selected]}'),
       actions: [
         IconButton(
+          tooltip: 'Xabarlar',
+          onPressed: () => Navigator.push<void>(
+            context,
+            MaterialPageRoute(
+              builder: (_) => Scaffold(
+                appBar: AppBar(title: const Text("Xabarlar")),
+                body: const SafeArea(child: MessagesScreen()),
+              ),
+            ),
+          ),
+          icon: const Icon(Icons.forum_outlined),
+        ),
+
+        IconButton(
           onPressed: () => ref.invalidate(dataProvider(path)),
           icon: const Icon(Icons.refresh),
         ),
@@ -363,6 +393,9 @@ class _Admin extends ConsumerState<AdminHome> {
           child: DataView(
             path: path,
             builder: (d) {
+              if (section == 'ai-provider') {
+                return AiProviderScreen(config: Map<String, dynamic>.from(d as Map));
+              }
               if (section == 'policy') {
                 return ListView(
                   padding: const EdgeInsets.all(24),

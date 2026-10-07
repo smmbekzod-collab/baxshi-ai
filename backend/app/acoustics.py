@@ -144,6 +144,16 @@ def rhythm(x):
 def evaluate(source, reference, id, job):
     x, quality = decode(source)
     f, coverage = pitch(x)
+    quality["voiced_coverage"] = round(coverage, 3)
+    quality["median_pitch_hz"] = round(float(np.median(f)), 1) if len(f) else None
+    quality["pitch_range_hz"] = (
+        [round(float(np.percentile(f, 10)), 1), round(float(np.percentile(f, 90)), 1)]
+        if len(f)
+        else []
+    )
+    frames = x[: len(x) // 800 * 800].reshape(-1, 800)
+    energy = np.sqrt(np.mean(frames * frames, axis=1))
+    quality["quiet_frame_ratio"] = round(float(np.mean(energy < 0.005)), 3)
     p = None
     r = None
     samples = []
@@ -197,13 +207,21 @@ def evaluate(source, reference, id, job):
         )
     english = job["locale"] == "en"
     worst = min(samples, key=lambda s: s["user"])["seconds"] if samples else 0
+    if not reference:
+        message = "Etalon tanlanmagan. Quyida ovozingizning o‘lchangan akustik xususiyatlari bor; taqqoslash bahosi uchun mos etalon tanlang."
+    elif coverage < 0.4:
+        message = "Ovozli kadrlar kam aniqlandi. Sokin joyda, telefonga bir xil masofada qayta yozing."
+    elif p is not None and p < 65:
+        message = "Ohang konturi etalondan farq qildi. Qisqa jumlani sekin tinglab, qulay registrda takrorlang."
+    else:
+        message = "Yozuv tahlil qilindi. Grafik taxminiy akustik moslikni bildiradi; badiiy talqinni ustoz bilan muhokama qiling."
     return {
         "schema_version": 1,
         "id": id,
         "school": job["school"],
         "reference_id": job["reference_id"] or "none",
         "source_asset_id": job["asset_id"],
-        "model_version": "acoustic-baseline-0.2-unvalidated",
+        "model_version": "acoustic-baseline-0.3-unvalidated",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "demo": False,
         "audio_available": False,
@@ -213,7 +231,7 @@ def evaluate(source, reference, id, job):
         "confidence_kind": "voiced_frame_coverage_not_probability",
         "coach_text": "Acoustic estimates require teacher review."
         if english
-        else "Akustik taxminiy natijalarni ustoz bilan tekshiring. Bu badiiy mahoratning yakuniy bahosi emas.",
+        else message,
         "feedback": [
             {
                 "start": round(worst, 2),

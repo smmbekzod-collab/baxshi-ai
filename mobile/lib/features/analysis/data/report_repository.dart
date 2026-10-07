@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
+
 import '../../../core/network/api_client.dart';
 import '../../../core/storage/local_store.dart';
 import '../domain/report.dart';
@@ -71,6 +73,9 @@ Report parseReport(Map<String, dynamic> j) {
     demo: j['demo'] as bool,
     coachText: j['coach_text'] as String,
     audioAvailable: j['audio_available'] as bool,
+    quality: Map<String, dynamic>.from(j['quality'] as Map? ?? {}),
+    technicalReference: j['technical_reference'] == true,
+    referenceLabel: j['reference_label'] as String? ?? '',
   );
 }
 

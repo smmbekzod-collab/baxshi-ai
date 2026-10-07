@@ -46,7 +46,7 @@ jobs:
       - name: Build installable test APK
         working-directory: mobile
         env:
-          API_URL: ${{ vars.API_BASE_URL || 'https://api.example.invalid' }}
+          API_URL: ${{ vars.API_BASE_URL || 'https://baxshi-ai-production.up.railway.app' }}
         run: flutter build apk --debug --flavor ${{ matrix.flavor }} --target ${{ matrix.target }} --dart-define=API_BASE_URL="$API_URL"
       - uses: actions/upload-artifact@v4
         with:

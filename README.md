@@ -1,10 +1,29 @@
 # Baxshi AI — Android + Super Admin + FastAPI
 
-**0.2.0 · GitHub uchun tayyor monorepo · pilot release.**
+**0.3.1 · GitHub uchun tayyor monorepo · pilot release.**
 
 Bu arxiv kod, testlar, Android loyihasi va build workflowlarini o‘z ichiga oladi.
 U jonli server yoki tayyor, ilmiy tasdiqlangan baxshichilik modeli degani emas.
 `docs/VALIDATION.md` tekshiruv natijalarini, `docs/RELEASE_GATES.md` ommaviy ishga tushirishdan oldingi ishlarni ko‘rsatadi.
+
+## v0.3 yangiliklari
+
+Avval **[Yangilash yo‘riqnomasi](docs/UPDATE_FROM_0.2_UZ.md)**ni o‘qing. Backend va mobil ilovani birga yangilang.
+
+- Railway bitta servisida avtomatik audio worker; FFmpeg/worker holati tekshiriladi.
+- Etalonsiz ovoz xususiyatlari, tushunarli xato va muvaffaqiyatsiz tahlilni qayta yuborish.
+- Yangi do‘mbira va ovoz to‘lqini logosi; bosh sahifa, kurslar, yozishma va profil navigatsiyasi.
+- Avatar yuklash/o‘chirish, ism/bio/maktabni saqlash.
+- Talaba ↔ admin yoki biriktirilgan ustoz matnli yozishmasi; ruxsatlar serverda tekshiriladi.
+- 6 ta original namunaviy dars, 12 ta test savoli, natija va o‘quv rivoji.
+- Ixtiyoriy Grok, Gemini yoki OpenAI/ChatGPT Coach: API kaliti admin ilovasidan yangilanadi, backendda shifrlanadi, telefonga yoki repoga chiqarilmaydi. API sozlanmasa lokal tavsiya davom etadi.
+- To‘rt maktab menyusi uchun aniq belgilangan sun’iy texnik etalon; bu maktablarni o‘rgangan model emas.
+
+## Ixtiyoriy AI API sozlash
+
+Admin ilovasida **AI provayderlari** bo‘limiga kiring. Grok (xAI), Gemini, OpenAI/ChatGPT yoki Lokal variantini tanlang. Tanlangan xizmatdan model ID oling, API kalitni kiriting va saqlang. Faqat backenddagi mavjud `ENCRYPTION_KEY` bilan shifrlangan holda saqlanadi; bo‘sh kalit maydoni oldingi kalitni saqlaydi. Yangi kalitni almashtirish yoki kalitni butunlay o‘chirish mumkin. Provider limiti tugasa, yangi kalitni shu yerdan kiriting.
+
+Ulanishni sinash bittagina kichik matn so‘rov yuboradi. Talaba tasdiqlash oynasida “Bir marta yuborish”ni bosgandagina anonim akustik ko‘rsatkichlar tashqi modelga uzatiladi; ovoz fayli, ism va profil yuborilmaydi. AI o‘chirilgan yoki javob bermagan holatda bepul lokal tavsiya va akustik hisobot ishlaydi. Metrikalar tashqi APIga uzatilishidan oldin foydalanuvchi roziligi mahsulot maxfiylik matnida aniq yozilishi kerak.
 
 ## 1. GitHub’dan ikkita APK olish
 
@@ -19,7 +38,7 @@ U jonli server yoki tayyor, ilmiy tasdiqlangan baxshichilik modeli degani emas.
    ```
 2. GitHub → Settings → Secrets and variables → Actions → **Variables**:
    `API_BASE_URL = https://SIZNING_API_DOMENINGIZ`.
-   URL bo‘lmasa test APK `https://api.example.invalid` bilan yig‘iladi; login ishlamaydi.
+   Standart URL: `https://baxshi-ai-production.up.railway.app`. Boshqa server ishlatsangiz variable bilan almashtiring.
 3. Actions → **Test and build APKs** → muvaffaqiyatli run → Artifacts:
    - `baxshi-user-debug`: foydalanuvchi ilovasi (`uz.baxshiai.app`).
    - `baxshi-admin-debug`: alohida Super Admin ilovasi (`uz.baxshiai.admin`).
@@ -53,8 +72,8 @@ limiti proxy uchun umumiy bo‘lishi mumkin. Internet pilotidan oldin edge rate 
 va ishonchli proxy sozlamasini moslang. Bir xil media volume API va workerga kerak.
 
 Ilova HTTPS talab qiladi. Oddiy `http://IP:8000` ni ilovaga bermang.
-PostgreSQL porti internetga chiqarilmaydi. `init-db` faqat boshlang‘ich sxema uchun;
-keyingi sxema o‘zgarishlarida versiyalangan migratsiya qo‘shish kerak.
+PostgreSQL porti internetga chiqarilmaydi. v0.3 yangi jadvallarni startup vaqtida qo‘shadi; mavjud ustunlar o‘zgarmaydi.
+Avval zaxira oling; kelajakdagi strukturaviy o‘zgarishlarda versiyalangan migratsiya kerak.
 
 ## 3. Birinchi ish oqimi
 
@@ -65,7 +84,7 @@ keyingi sxema o‘zgarishlarida versiyalangan migratsiya qo‘shish kerak.
    `license_until`/`due` hozir Unix sekund qiymatlaridir; admin formalari pilot uchun sodda.
 4. Foydalanuvchi ilovasida hisob bilan kiring. 5–1200 soniyali ovoz yozing,
    maktab va mos etalonni tanlang, rozilikni belgilang va yuboring.
-5. Navbat holati yangilanadi. Tugagach **Tahlilni yangilash** → Tahlil yoki AI Coach.
+5. Navbat holati yangilanadi. Tugagach **Hisobotni ochish** orqali tahlil va tavsiyalarni ko‘ring.
 6. Admin tahlilni ko‘radi, ekspert bahosi qo‘shadi; muvaffaqiyatsiz vazifani qayta boshlaydi.
 
 Etalonsiz audio sifat tekshiruvi va hisobot ishlaydi, pitch/rhythm sonli bahosi
@@ -82,6 +101,8 @@ chiqmaydi. Soxta raqam o‘rniga sabab ko‘rsatiladi.
 | Tahlil | Beshta metric modeli, null/reason, fl_chart grafiki, model/reference metadata, cached report |
 | Akustik worker | FFmpeg 16 kHz konversiya, davomiylik/sukunat/clipping filtri, F0 kontur DTW va onset-interval taxminlari |
 | AI Coach | Hisobotdan matn/mashq; mavjud tizim ovozi bilan ixtiyoriy TTS. Hozir qoidaviy tavsiya, LLM emas |
+| Profil / xabarlar | JPG/PNG/WebP avatar, o‘z profilini tahrirlash, admin/biriktirilgan ustoz bilan chat, foreground 5 soniyalik yangilash |
+| O‘qish | 6 dars, 12 savol, serverda tekshirish, 70% o‘tish mezoni, shaxsiy progress, offline dars matnlari |
 | Tarix | Mahalliy yozuvlar, server vazifalari, tanlangan tugagan hisobotni ochish, mashq kundaligi |
 | Maxfiylik | Ixtiyoriy research consent, eksport, hisob o‘chirish so‘rovi, worker cleanup |
 | Super Admin | Hisob/rol/faollik, sessiyalarni bekor qilish, etalon/litsenziya, material, vazifa, hisobot/ekspert bahosi, guruh/topshiriq, audit, siyosat, rozilikka asoslangan CSV |
@@ -96,7 +117,7 @@ ammo audio baytlari alohida ilova kaliti bilan shifrlanmagan.
 
 ## 5. Ilmiy cheklov
 
-`acoustic-baseline-0.2-unvalidated` badiiy mahorat baholovchisi emas. Pitch:
+`acoustic-baseline-0.3-unvalidated` badiiy mahorat baholovchisi emas. Pitch:
 registrga moslashtirilgan kontur; rhythm: onset intervallari taqsimoti.
 Breath, resonance va style hozir `null` + tushuntirish. Haqiqiy to‘rt maktab
 klassifikatori uchun litsenziyalangan dataset, ustozlar annotatsiyasi, ijrochi bo‘yicha

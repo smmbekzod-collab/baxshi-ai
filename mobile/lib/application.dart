@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+
 import 'core/providers.dart';
 import 'core/network/api_client.dart';
 import 'core/storage/local_store.dart';
@@ -13,6 +15,9 @@ import 'features/recording/presentation/recording_controller.dart';
 import 'shared/api_ui.dart';
 import 'shared/audio_session.dart';
 import 'admin.dart';
+import 'shared/brand.dart';
+import 'features/community/community.dart';
+import 'features/learning/learning_screen.dart';
 
 Future<void> startApp({required bool admin}) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -203,6 +208,8 @@ class _Gate extends ConsumerState<SessionGate> {
     ref.invalidate(reportProvider);
     ref.invalidate(selectedReportProvider);
     ref.invalidate(dataProvider);
+    ref.invalidate(avatarProvider);
+    ref.invalidate(lessonsProvider);
     await ref.read(tokensProvider).clear();
     ref.read(accountProvider.notifier).set('demo');
     if (mounted) {
@@ -243,7 +250,7 @@ class _Gate extends ConsumerState<SessionGate> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.graphic_eq, size: 72),
+                const Center(child: BrandMark(size: 96)),
                 const SizedBox(height: 20),
                 Text(
                   widget.admin ? 'Baxshi AI • Super Admin' : 'Baxshi AI',

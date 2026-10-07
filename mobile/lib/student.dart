@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'core/providers.dart';
 import 'features/analysis/presentation/analytics_screen.dart';
 import 'features/recording/presentation/recording_screen.dart';
@@ -9,6 +10,9 @@ import 'shared/api_ui.dart';
 import 'shared/job_status.dart';
 import 'shared/local_player.dart';
 import 'l10n/strings.dart';
+import 'features/community/community.dart';
+import 'features/learning/learning_screen.dart';
+import 'shared/brand.dart';
 
 class StudentHome extends ConsumerStatefulWidget {
   const StudentHome({super.key, required this.logout});
@@ -23,53 +27,131 @@ class _Student extends ConsumerState<StudentHome> {
   Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
     final labels = [
+      'Bosh sahifa',
       tr(lang, 'record'),
       tr(lang, 'analytics'),
       tr(lang, 'coach'),
-      'Kutubxona',
-      'Tarix',
-      'Sozlamalar',
+      'O‘quv kurslari',
+      'Tarix va kundalik',
+      'Xabarlar',
+      'Profil',
     ];
     final screens = [
+      LearningHome(navigate: (i) => setState(() => selected = i)),
       const RecordingScreen(),
       const AnalyticsScreen(),
       const CoachScreen(),
-      const LibraryScreen(),
+      const LearningScreen(),
       const HistoryScreen(),
+      const MessagesScreen(),
       SettingsScreen(logout: widget.logout),
     ];
+    const icons = [
+      Icons.home_outlined,
+      Icons.mic_none,
+      Icons.insights,
+      Icons.auto_awesome,
+      Icons.menu_book_outlined,
+      Icons.history,
+      Icons.chat_bubble_outline,
+      Icons.person_outline,
+    ];
+    Future<void> navigate(int i) async {
+      await ref.read(recordingProvider.notifier).pause();
+      if (mounted) setState(() => selected = i);
+    }
+
+    final wide = MediaQuery.sizeOf(context).width >= 960;
+    final body = KeyedSubtree(
+      key: ValueKey(selected),
+      child: screens[selected],
+    );
     return Scaffold(
-      appBar: AppBar(title: Text('Baxshi AI • ${labels[selected]}')),
-      drawer: NavigationDrawer(
-        selectedIndex: selected,
-        onDestinationSelected: (i) async {
-          await ref.read(recordingProvider.notifier).pause();
-          if (!context.mounted) return;
-          Navigator.pop(context);
-          setState(() => selected = i);
-        },
-        children: [
-          const Padding(padding: EdgeInsets.all(24), child: Text('BAXSHI AI')),
-          for (var i = 0; i < labels.length; i++)
-            NavigationDrawerDestination(
-              icon: Icon(
-                [
-                  Icons.mic,
-                  Icons.insights,
-                  Icons.auto_awesome,
-                  Icons.library_music,
-                  Icons.history,
-                  Icons.settings,
-                ][i],
-              ),
-              label: Text(labels[i]),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const BrandMark(size: 34),
+            const SizedBox(width: 10),
+            Flexible(child: Text(labels[selected])),
+          ],
+        ),
+      ),
+      drawer: wide
+          ? null
+          : NavigationDrawer(
+              selectedIndex: selected,
+              onDestinationSelected: (i) {
+                Navigator.pop(context);
+                navigate(i);
+              },
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Row(
+                    children: [
+                      BrandMark(size: 44),
+                      SizedBox(width: 12),
+                      Text('BAXSHI AI'),
+                    ],
+                  ),
+                ),
+                for (var i = 0; i < labels.length; i++)
+                  NavigationDrawerDestination(
+                    icon: Icon(icons[i]),
+                    label: Text(labels[i]),
+                  ),
+              ],
             ),
-        ],
-      ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        child: KeyedSubtree(key: ValueKey(selected), child: screens[selected]),
-      ),
+      body: wide
+          ? Row(
+              children: [
+                NavigationRail(
+                  selectedIndex: selected,
+                  onDestinationSelected: navigate,
+                  labelType: NavigationRailLabelType.all,
+                  destinations: [
+                    for (var i = 0; i < labels.length; i++)
+                      NavigationRailDestination(
+                        icon: Icon(icons[i]),
+                        label: Text(labels[i]),
+                      ),
+                  ],
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(child: body),
+              ],
+            )
+          : body,
+      bottomNavigationBar: wide
+          ? null
+          : NavigationBar(
+              selectedIndex: const [0, 1, 4, 6, 7].contains(selected)
+                  ? const [0, 1, 4, 6, 7].indexOf(selected)
+                  : 1,
+              onDestinationSelected: (i) => navigate(const [0, 1, 4, 6, 7][i]),
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  label: 'Bosh',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.mic_none),
+                  label: 'Mashq',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.menu_book_outlined),
+                  label: 'Kurslar',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.chat_bubble_outline),
+                  label: 'Xabarlar',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outline),
+                  label: 'Profil',
+                ),
+              ],
+            ),
     );
   }
 }
@@ -192,6 +274,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => ListView(
     padding: const EdgeInsets.all(24),
     children: [
+      const ProfileCard(),
       ListTile(
         title: const Text('Rang mavzusi'),
         trailing: IconButton(
@@ -275,7 +358,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
       const SizedBox(height: 20),
       const Text(
-        'Baxshi AI 0.2.0 • Akustik baholar tajriba bosqichida. Ustoz bahosini almashtirmaydi.',
+        'Baxshi AI 0.3.1 • Akustik baholar tajriba bosqichida. Ustoz bahosini almashtirmaydi.',
       ),
     ],
   );

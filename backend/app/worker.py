@@ -68,6 +68,9 @@ def run_one(engine):
             raise Rejected("reference_unavailable")
         rid = uid()
         result = evaluate(source, reference, rid, data)
+        if data.get("reference_id") and ref:
+            result["reference_label"] = ref["data"].get("title", "")
+            result["technical_reference"] = ref["data"].get("technical_demo", False)
         with engine.begin() as c:
             current = one(c, jobs, jobs.c.id == id, True)
             if (
@@ -190,17 +193,12 @@ def cleanup(engine, media):
 
 
 if __name__ == "__main__":
+    import threading
+    from .db import initialize
+    from .runtime import worker_loop
+
     engine = connect(os.environ["DATABASE_URL"])
-    media = Path(os.environ.get("MEDIA_ROOT", "./media"))
-    last = 0
-    while True:
-        try:
-            if now() - last > 3600:
-                cleanup(engine, media)
-                last = now()
-            if not run_one(engine):
-                time.sleep(2)
-        except Exception as error:
-            # Avoid leaking paths, passwords or database URLs into logs.
-            logging.error("worker_cycle_failed category=%s", type(error).__name__)
-            time.sleep(5)
+    initialize(engine)
+    worker_loop(
+        engine, Path(os.environ.get("MEDIA_ROOT", "./media")), threading.Event()
+    )

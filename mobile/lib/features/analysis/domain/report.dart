@@ -58,6 +58,9 @@ class Report {
     required this.demo,
     required this.coachText,
     required this.audioAvailable,
+    this.quality = const {},
+    this.technicalReference = false,
+    this.referenceLabel = "",
   });
   final String id, modelVersion, referenceId, coachText;
   final School school;
@@ -66,6 +69,9 @@ class Report {
   final List<FeedbackItem> feedback;
   final DateTime createdAt;
   final bool demo, audioAvailable;
+  final Map<String, dynamic> quality;
+  final bool technicalReference;
+  final String referenceLabel;
 }
 
 class ReportResult {

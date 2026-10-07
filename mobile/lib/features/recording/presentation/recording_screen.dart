@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/providers.dart';
-import '../../../core/network/api_client.dart';
 import '../../../features/analysis/domain/report.dart';
 import '../../../l10n/strings.dart';
 import '../../../shared/local_player.dart';
@@ -60,6 +61,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
     final token = CancelToken();
     cancel = token;
     final selectedSchool = school;
+    final selectedReference = referenceId;
     try {
       final session = await ref.read(tokensProvider).read();
       if (session == null) throw StateError('auth');
@@ -89,14 +91,14 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
               'asset_id': assetId,
               'school': selectedSchool.name,
               'locale': locale,
-              'reference_id': referenceId,
+              'reference_id': selectedReference,
               'consent_version': 'analysis-v1',
             },
             cancelToken: token,
             options: Options(
               headers: {
                 'Idempotency-Key':
-                    '${recording.id}:${selectedSchool.name}:$locale:${referenceId ?? 'none'}',
+                    '${recording.id}:${selectedSchool.name}:$locale:${selectedReference ?? 'none'}',
               },
             ),
           );
@@ -117,7 +119,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
         setState(
           () => message = e is StateError && e.message == 'auth'
               ? 'auth'
-              : safeNetworkMessage(e),
+              : errorMessage(e),
         );
       }
     } finally {

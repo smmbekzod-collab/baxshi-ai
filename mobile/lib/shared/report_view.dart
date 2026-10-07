@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../core/providers.dart';
-import '../core/network/api_client.dart';
+import 'api_ui.dart';
 import '../features/analysis/domain/report.dart';
 import '../l10n/strings.dart';
 
@@ -24,7 +25,7 @@ class ReportView extends ConsumerWidget {
                     lang,
                     error is StateError && error.message == 'auth'
                         ? 'auth'
-                        : safeNetworkMessage(error),
+                        : errorMessage(error),
                   ),
                 ),
                 FilledButton(

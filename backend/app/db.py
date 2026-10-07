@@ -110,6 +110,10 @@ rates = Table(
 
 
 def connect(url):
+    if url.startswith("postgres://"):
+        url = "postgresql+psycopg://" + url[len("postgres://") :]
+    elif url.startswith("postgresql://"):
+        url = "postgresql+psycopg://" + url[len("postgresql://") :]
     e = create_engine(
         url,
         pool_pre_ping=True,
@@ -169,3 +173,32 @@ def add(c, kind, owner, data, identifier=None):
 
 def audit(c, actor, action, target, detail=None):
     add(c, "audit", actor, {"action": action, "target": target, "detail": detail or {}})
+
+
+# v0.3 adds tables only. Existing v0.2 rows and authentication remain compatible.
+worker_heartbeats = Table(
+    "worker_heartbeats",
+    metadata,
+    Column("id", String(32), primary_key=True),
+    Column("updated", Integer, nullable=False),
+)
+conversations = Table(
+    "conversations",
+    metadata,
+    Column("id", String(32), primary_key=True),
+    Column("a", ForeignKey("users.id"), nullable=False, index=True),
+    Column("b", ForeignKey("users.id"), nullable=False, index=True),
+    Column("created", Integer, nullable=False),
+    UniqueConstraint("a", "b"),
+)
+messages = Table(
+    "messages",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("thread", ForeignKey("conversations.id"), nullable=False, index=True),
+    Column("sender", ForeignKey("users.id"), nullable=False),
+    Column("client_id", String(64), nullable=False),
+    Column("body", Text, nullable=False),
+    Column("created", Integer, nullable=False),
+    UniqueConstraint("sender", "client_id"),
+)

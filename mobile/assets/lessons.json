@@ -1,0 +1,56 @@
+[
+  {
+    "key": "recording",
+    "title": "Sifatli ovoz yozish",
+    "minutes": 8,
+    "level": "Boshlang‘ich",
+    "body": "Sokin joy tanlang. Telefonni bir xil masofada tuting. 5–20 soniyali sinov yozuvi bilan boshlang.\n\n1. Mikrofon ruxsatini bering.\n2. Qulay ovozda bir jumla ayting.\n3. Yozuvni tinglang: shovqin, uzilish yoki buzilish bormi?\n4. Zarur bo‘lsa masofani o‘zgartirib qayta yozing.\n\nBu modul yozuv sifatini o‘rgatadi. Qulay bo‘lmagan yoki og‘riqli ovoz chiqarishni davom ettirmang.",
+    "order": 0,
+    "demo_content": true
+  },
+  {
+    "key": "listening",
+    "title": "Etalonni faol tinglash",
+    "minutes": 12,
+    "level": "Boshlang‘ich",
+    "body": "Ustoz tavsiya qilgan, foydalanishga ruxsat berilgan ijroni tanlang. Etalon va o‘zingiz aytadigan parcha bir-biriga mos bo‘lsin.\n\n1. Parchani bir marta to‘liq tinglang.\n2. Jumla boshi va oxirini belgilang.\n3. Urg‘u va pauzalarni yozib oling.\n4. Bir jumlani tinglab, o‘z talqiningizda takrorlang.\n\nXorazm, Qashqadaryo, Surxondaryo va Qoraqalpog‘iston tanlovlari materialni guruhlaydi. Texnik demo haqiqiy baxshi ijrosi emas.",
+    "order": 1,
+    "demo_content": true
+  },
+  {
+    "key": "pitch",
+    "title": "Ohang konturini kuzatish",
+    "minutes": 10,
+    "level": "Amaliy",
+    "body": "Ohang konturi ovozning vaqt davomida baland-past o‘zgarishini bildiradi. Hz ko‘rsatkichi badiiy mahoratga teng emas.\n\n1. Qulay registrda qisqa jumla yozing.\n2. Etalon bilan tinglab solishtiring.\n3. Farq sezilgan joyni ajrating.\n4. Jumla tezligini pasaytirib takrorlang.\n\nIlova registrga moslashtirilgan akustik taqqoslash qiladi. Natijani ustozning izohi bilan birga o‘qing.",
+    "order": 2,
+    "demo_content": true
+  },
+  {
+    "key": "rhythm",
+    "title": "Ritm va jumla tuzilishi",
+    "minutes": 10,
+    "level": "Amaliy",
+    "body": "Qisqa parchadagi takrorlanadigan urg‘ularni tinglang. Barcha doston parchalarini bir xil qat’iy metronomga majburlamang: vazifani ustoz bilan aniqlang.\n\n1. Ustoz bergan ritmni chapak bilan qaytaring.\n2. Matnni shu ritmda o‘qing.\n3. Qisqa jumlani kuylab yozing.\n4. Shoshilish yoki cho‘zilish sezilgan joylarni belgilang.\n\nIlovaning onset ko‘rsatkichi an’anaviy usulning yakuniy bahosi emas.",
+    "order": 3,
+    "demo_content": true
+  },
+  {
+    "key": "phrase",
+    "title": "Matn, pauza va ifoda",
+    "minutes": 12,
+    "level": "Amaliy",
+    "body": "Avval matn mazmunini tushuntirib bering. Jumla ma’nosiga mos urg‘u va pauzani ustoz bilan belgilang.\n\n1. Matnni oddiy nutqda o‘qing.\n2. Muhim so‘zlarni belgilang.\n3. Tabiiy pauzalarni qo‘ying.\n4. Shu jumlani ijro qilib, matn ravshanligini tinglang.\n\nTelefon audio’sidan fiziologik nafas nazoratiga qat’iy foiz berilmaydi. Qulay nafas va ovoz bilan ishlang.",
+    "order": 4,
+    "demo_content": true
+  },
+  {
+    "key": "review",
+    "title": "Natijani ustoz bilan tahlil qilish",
+    "minutes": 10,
+    "level": "Yakunlash",
+    "body": "Bir xil parcha, etalon va sharoit bilan ikki yozuv tayyorlang. Model versiyasi o‘zgarsa, raqamlarni to‘g‘ridan-to‘g‘ri qiyoslamang.\n\n1. Har ikki yozuvni tinglang.\n2. Bir kuchli va bir rivojlantiriladigan jihatni yozing.\n3. Xabarlar bo‘limida ustozga aniq savol yuboring.\n4. Ustoz izohi asosida keyingi mashq maqsadini belgilang.\n\nKundalikda vaqtni qayd eting. Muntazam qisqa mashqni maqsadli olib boring.",
+    "order": 5,
+    "demo_content": true
+  }
+]

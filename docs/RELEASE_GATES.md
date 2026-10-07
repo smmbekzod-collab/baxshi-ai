@@ -29,3 +29,8 @@ Bu paketda yo‘q: push notification/WorkManager background sync, to‘lovlar,
 jonli transkripsiya, streaming AI inference, spektrogramma, o‘qitilgan maktab
 klassifikatori, ovoz klonlash, LLM coach, tayyor Play Store listing.
 Backendda guruh/topshiriq va teacher-review API mavjud; alohida teacher ilovasi yo‘q.
+
+
+v0.3: profil avatari va matnli chat qo‘shildi. Account deletion avatarni o‘chiradi va yuborilgan xabar matnini redact qiladi; conversation/audit metadata saqlanadi. Dars/quiz/texnik etalonlar pilot namunalari; pedagog va baxshi ekspert ko‘rigidan o‘tkazing.
+
+11. For optional LLM Coach, confirm privacy disclosure, vendor retention/billing terms and key rotation before enabling. Keep `ENCRYPTION_KEY` stable or add re-encryption migration first. Validate each vendor's current model ID and account quota. Provider API errors must fall back to local recommendations.

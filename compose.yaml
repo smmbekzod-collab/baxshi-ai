@@ -6,6 +6,8 @@ x-backend: &backend
     JWT_SECRET: ${JWT_SECRET:?Run tool/setup_env.py}
     ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Run tool/setup_env.py}
     MEDIA_ROOT: /data/media
+    EMBEDDED_WORKER: "false"
+    SEED_DEMO_CONTENT: "true"
   volumes:
     - media:/data/media
   depends_on:

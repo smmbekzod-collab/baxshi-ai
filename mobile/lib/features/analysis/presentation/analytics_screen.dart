@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
 import '../../../shared/report_view.dart';
+import '../../../shared/quality_panel.dart';
 import '../../../l10n/strings.dart';
 import '../domain/report.dart';
 
@@ -25,8 +27,18 @@ class AnalyticsScreen extends StatelessWidget {
                 '${report.school.name} · ${report.createdAt.toLocal().toString().split('.').first}',
               ),
               Text(
-                '${tr(lang, 'reference')}: ${report.referenceId} · ${report.modelVersion}',
+                '${tr(lang, 'reference')}: ${report.referenceLabel.isEmpty ? report.referenceId : report.referenceLabel} · ${report.modelVersion}',
               ),
+              if (report.technicalReference)
+                const Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Text(
+                      'TEXNIK SINOV: bu sun’iy signal bilan taqqoslash. Baxshichilik maktabi yoki badiiy mahorat bahosi emas.',
+                    ),
+                  ),
+                ),
+              QualityPanel(quality: report.quality),
               const SizedBox(height: 24),
               LayoutBuilder(
                 builder: (context, size) {

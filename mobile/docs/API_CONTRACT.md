@@ -73,3 +73,9 @@ workers. Model inference and ffmpeg must run outside HTTP request processes.
 Use signed short-lived download URLs only through a separate unauthenticated
 client with a strict storage-host allowlist. Current client only uses same-origin
 API content endpoints. Configure HTTPS byte streaming or internal object proxying.
+
+## Optional AI (v0.3.1)
+
+- `GET/PUT /v1/admin/ai-provider`: Super Admin only; returns provider/model/enabled/key_configured, never the secret. PUT encrypts a supplied key server-side. Blank key preserves the old key; `clear_api_key: true` deletes it.
+- `POST /v1/admin/ai-provider/test`: Super Admin initiates one limited connectivity request.
+- `POST /v1/reports/{report_id}/coach-ai`: report owner (or authorized reviewer) may request optional feedback. Confirmation UI precedes each outbound call. Only acoustic metric JSON is sent; local feedback is returned when disabled or unavailable.

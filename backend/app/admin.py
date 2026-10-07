@@ -106,6 +106,8 @@ def reference(b: S.Reference, u=Depends(admin), c=Depends(db)):
 def reference_edit(id: str, b: S.Reference, u=Depends(admin), c=Depends(db)):
     x = require(obj(c, id, "reference", lock=True))
     data = reference_values(c, b, u)
+    if x["data"].get("technical_demo"):
+        data["technical_demo"] = True
     c.execute(
         objects.update()
         .where(objects.c.id == id)

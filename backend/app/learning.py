@@ -87,6 +87,14 @@ def analyze(
     p = one(c, policy, policy.c.id == 1)["data"]
     if p["maintenance"]:
         raise HTTPException(503, "maintenance")
+    if not request.app.state.testing:
+        from .runtime import status
+
+        health = status(request.app.state.engine)
+        if not health["ffmpeg_available"]:
+            raise HTTPException(503, "decoder_unavailable")
+        if not health["worker_online"]:
+            raise HTTPException(503, "worker_unavailable")
     version = request.headers.get("X-App-Version", "0.2.0")
     try:
         if tuple(map(int, version.split("."))) < tuple(
@@ -263,7 +271,7 @@ def export(u=Depends(current), c=Depends(db)):
 
 
 @r.post("/delete-account", status_code=202)
-def delete_account(u=Depends(current), c=Depends(db)):
+def delete_account(request: Request, u=Depends(current), c=Depends(db)):
     if u["role"] == "super_admin":
         raise HTTPException(409, "protected_admin")
     c.execute(
@@ -286,6 +294,9 @@ def delete_account(u=Depends(current), c=Depends(db)):
     c.execute(
         objects.delete().where(objects.c.kind == "consent", objects.c.owner == u["id"])
     )
+    from .social import erase_user
+
+    erase_user(c, u["id"], request.app.state.media)
     audit(c, u["id"], "deletion_requested", u["id"])
     return {"status": "scheduled"}
 
@@ -314,3 +325,22 @@ def submit(id: str, b: S.Submit, u=Depends(current), c=Depends(db)):
         if x["data"]["assignment_id"] == id:
             c.execute(objects.delete().where(objects.c.id == x["id"]))
     add(c, "submission", u["id"], {"assignment_id": id, "report_id": b.report_id})
+
+
+@r.post("/analyses/{id}/retry", status_code=204)
+def retry(id: str, request: Request, u=Depends(current), c=Depends(db)):
+    from .security import limit
+
+    x = require(one(c, jobs, (jobs.c.id == id) & (jobs.c.owner == u["id"]), True))
+    if x["status"] != "failed":
+        raise HTTPException(409, "invalid_job_action")
+    asset = require(obj(c, x["data"]["asset_id"], "asset", u["id"]))
+    if not Path(asset["data"]["path"]).exists():
+        raise HTTPException(410, "media_expired")
+    limit(c, "analysis-retry:" + u["id"], 10)
+    c.execute(
+        jobs.update()
+        .where(jobs.c.id == id)
+        .values(status="queued", attempts=0, error=None, lease=None)
+    )
+    audit(c, u["id"], "analysis_retry", id)
